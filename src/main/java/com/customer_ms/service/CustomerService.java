@@ -31,14 +31,16 @@ public class CustomerService {
         return "Signup successful!";
     }
 
-    public String login(Customer customer) {
+    public Customer login(Customer customer) {
         Customer existingCustomer = customerRepo.findByUsername(customer.getUsername());
         if (existingCustomer != null && passwordEncoder.matches(customer.getPassword(), existingCustomer.getPassword())) {
-            return "Login successful!";
+            existingCustomer.setPassword(null); // Hide the password
+            return existingCustomer;
         } else {
-            return "Invalid username or password!";
+            return null;
         }
     }
+
 
     public Customer viewAccount(int id) {
         Optional<Customer> customer = customerRepo.findById(id);
@@ -54,9 +56,12 @@ public class CustomerService {
     }
 
     public Customer updateAccount(Customer updatedCustomer) {
+        Optional<Customer> optionalCustomer = customerRepo.findById(updatedCustomer.getId());
 
         if (updatedCustomer.getPassword() != null && !updatedCustomer.getPassword().isEmpty()) {
             updatedCustomer.setPassword(passwordEncoder.encode(updatedCustomer.getPassword()));
+        }else {
+            updatedCustomer.setPassword(optionalCustomer.get().getPassword());
         }
 
         return customerRepo.save(updatedCustomer);

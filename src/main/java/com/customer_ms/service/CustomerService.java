@@ -14,6 +14,8 @@ public class CustomerService {
 
     @Autowired
     private CustomerRepository customerRepo;
+    @Autowired
+    private ContractInterService contractService;
 
     public List<Customer> getAllLCustomers(){
         return customerRepo.findAll();
@@ -52,6 +54,7 @@ public class CustomerService {
 
     public String deleteAccount(int id) {
         customerRepo.deleteById(id);
+        contractService.cancelContractForCustomer(id); //cancelling the contracts for the deleted customer
         return "Account deleted successfully!";
     }
 

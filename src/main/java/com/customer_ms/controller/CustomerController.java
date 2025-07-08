@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:5173")
 public class CustomerController {
 
     @Autowired
@@ -22,18 +22,16 @@ public class CustomerController {
     }
 
     @PostMapping("/customers/signup")
-    public String signup(@RequestBody Customer customer) {
-        return customerService.signup(customer);
+    public ResponseEntity<Customer> signup(@RequestBody Customer customer) {
+        Customer signupResult = customerService.signup(customer);
+        return ResponseEntity.ok(signupResult);
     }
 
     @PostMapping("/customers/login")
-    public ResponseEntity<?> login(@RequestBody Customer customer) {
+    public ResponseEntity<Customer> login(@RequestBody Customer customer) {
         Customer result = customerService.login(customer);
-        if (result != null) {
-            return ResponseEntity.ok(result); // returns whole customer object (without password)
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password!");
-        }
+        return ResponseEntity.ok(result); // returns whole customer object (without password)
+
     }
 
 
@@ -43,12 +41,13 @@ public class CustomerController {
     }
 
     @DeleteMapping("/customers/{id}")
-    public String deleteAccount(@PathVariable int id) {
-        return customerService.deleteAccount(id);
+    public void deleteAccount(@PathVariable int id) {
+        customerService.deleteAccount(id);
     }
 
-    @PutMapping("/customers")
-    public Customer updateAccount(@RequestBody Customer customer) {
-        return customerService.updateAccount(customer);
+    @PutMapping("/customers/update")
+    public ResponseEntity<Customer> updateAccount(@RequestBody Customer customer) {
+        Customer updateResult = customerService.updateAccount(customer);
+        return ResponseEntity.ok(updateResult);
     }
 }

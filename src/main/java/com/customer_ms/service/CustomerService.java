@@ -3,8 +3,10 @@ package com.customer_ms.service;
 import com.customer_ms.data.Customer;
 import com.customer_ms.data.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,14 +25,13 @@ public class CustomerService {
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public String signup(Customer customer) {
+    public Customer signup(Customer customer) {
         if (customerRepo.findByUsername(customer.getUsername()) != null) {
-            return "Username already exists!";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists!");
         }
 
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
-        customerRepo.save(customer);
-        return "Signup successful!";
+        return customerRepo.save(customer);
     }
 
     public Customer login(Customer customer) {
@@ -39,7 +40,7 @@ public class CustomerService {
             existingCustomer.setPassword(null); // Hide the password
             return existingCustomer;
         } else {
-            return null;
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password is wrong!");
         }
     }
 
@@ -52,14 +53,17 @@ public class CustomerService {
         return null;
     }
 
-    public String deleteAccount(int id) {
+    public void deleteAccount(int id) {
         customerRepo.deleteById(id);
         contractService.cancelContractForCustomer(id); //cancelling the contracts for the deleted customer
-        return "Account deleted successfully!";
     }
 
     public Customer updateAccount(Customer updatedCustomer) {
         Optional<Customer> optionalCustomer = customerRepo.findById(updatedCustomer.getId());
+
+        if (customerRepo.findByUsername(updatedCustomer.getUsername()) != null && !updatedCustomer.getUsername().equals(optionalCustomer.get().getUsername())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists!");
+        }
 
         if (updatedCustomer.getPassword() != null && !updatedCustomer.getPassword().isEmpty()) {
             updatedCustomer.setPassword(passwordEncoder.encode(updatedCustomer.getPassword()));

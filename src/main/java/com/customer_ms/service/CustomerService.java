@@ -74,6 +74,10 @@ public class CustomerService {
         return customerRepo.save(updatedCustomer);
     }
 
+    public Boolean customerExistsById(int id){
+        return customerRepo.existsById(id);
+    }
+
 
 
 }

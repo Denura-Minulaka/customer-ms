@@ -3,7 +3,6 @@ package com.customer_ms.controller;
 import com.customer_ms.data.Customer;
 import com.customer_ms.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,5 +48,16 @@ public class CustomerController {
     public ResponseEntity<Customer> updateAccount(@RequestBody Customer customer) {
         Customer updateResult = customerService.updateAccount(customer);
         return ResponseEntity.ok(updateResult);
+    }
+
+    @RequestMapping(method = RequestMethod.HEAD, path = "/customers/{id}")
+    public ResponseEntity<Void> customerExistsById(@PathVariable int id){
+        Boolean exists = customerService.customerExistsById(id);
+
+        if (exists){
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

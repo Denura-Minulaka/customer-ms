@@ -2,6 +2,7 @@ package com.customer_ms.service;
 
 import com.customer_ms.data.Customer;
 import com.customer_ms.data.CustomerRepository;
+import com.customer_ms.service.interservice.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +18,7 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepo;
     @Autowired
-    private ContractInterService contractService;
+    private ContractService contractService;
 
     public List<Customer> getAllLCustomers(){
         return customerRepo.findAll();

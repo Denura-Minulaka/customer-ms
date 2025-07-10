@@ -1,17 +1,17 @@
-package com.customer_ms.service;
+package com.customer_ms.service.interservice;
 
-import com.customer_ms.config.WebClientConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Map;
 
 @Service
-public class ContractInterService {
+public class ContractService {
     private WebClient webClient;
 
-    public ContractInterService(WebClient.Builder builder){
-        this.webClient = builder.baseUrl("http://localhost:8089/contract-service").build();
+    public ContractService(WebClient.Builder builder, @Value("${service.contract.url}") String url){
+        this.webClient = builder.baseUrl(url).build();
     }
 
     //fire and forget method to cancel contracts

@@ -56,6 +56,7 @@ public class CustomerController {
 
         if (exists){
             return ResponseEntity.ok().build();
+
         } else {
             return ResponseEntity.notFound().build();
         }
